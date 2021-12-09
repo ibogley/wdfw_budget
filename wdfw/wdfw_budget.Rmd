@@ -1,0 +1,70 @@
+---
+title: "WDFW Budget"
+author: "Ian Bogley"
+date: "12/8/2021"
+output: pdf_document
+---
+
+Today we are going to set out to visualize budget data for the Washington Department of Fish and Wildlife.
+
+I will be getting my data from their page on the 2022 legislative session: https://wdfw.wa.gov/about/administration/budget/update
+
+To start, let's load in our packages.
+
+```{r intro}
+library(pacman)
+p_load(tidyverse,ggrepel)
+```
+
+In the future, perhaps I will use Rvest and httr to webscrape this information, but for now let's manually input the data.
+
+```{r data}
+#WDFW 2022 operating funding emergency needs budget
+df_operating_funding_emergency_needs <- data.frame(project=c("Supporting habitat-friendly solar facilities",
+                                                             "Forage fish spawning monitoring",
+                                                             "Integrating salmon recovery plans at local level",
+                                                             "Freshwater monitoring",
+                                                             "Meeting recreation needs",
+                                                             "Building salmon team capacity",
+                                                             "Fish passage rulemaking",
+                                                             "License reduction and alternative gear: Columbia River",
+                                                             "Hatchery production and compliance",
+                                                             "Monitoring recreational shellfish harvest",
+                                                             "Safe and sanitary water access areas",
+                                                             "Improving wildlife monitoring",
+                                                             "Supplemental maintenance level packages"),
+                                                   funds = c(400000,700000,
+                                                             1300000,2600000,
+                                                             3500000,1000000,
+                                                             300000,3400000,
+                                                             600000,300000,
+                                                             500000,2400000,
+                                                             24000000))
+
+#WDFW 2022 Capital projects budget
+df_capital_projects <- data.frame(
+  projects = c("Duckabush Estuary Restoration Project",
+               "Hoffstadt Hills Aqcuisition",
+               "Deschutes Watershed Center Hatchery Work"),
+  funds = c(51000000,14500000,2200000))
+```
+
+Now let's visualize the operating funding emergency budget in a pie chart.
+
+```{r operating}
+#Plotting operating emergency funding needs
+p1 <- df_operating_funding_emergency_needs %>% 
+  ggplot(aes(x = "", y = funds, fill = project)) + 
+  geom_bar(stat = "identity",width = 1,color = "black") +
+  coord_polar("y",start = 0) +
+  theme_void() + 
+  labs(title = "2022 Legislative Session: WDFW", 
+       subtitle = paste("Operating Funding Emergency Needs, Total = $",
+                          format(sum(df_operating_funding_emergency_needs$funds),
+                                 scientific = FALSE,big.mark = ","),sep = ""),
+       fill = "") +
+  scale_fill_brewer(palette = "Set3")
+
+p1
+```
+
